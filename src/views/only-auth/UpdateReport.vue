@@ -1,81 +1,97 @@
 <script>
+// Страница для обновления отчета
+// Импортируем необходимые модули и компоненты
 import Wrapper from "../../components/ui/Wrapper.vue";
 import Button from "../../components/ui/Button.vue";
 import orderService from "../../service/order-service/order.service";
+import reportService from "../../service/report-service/report-service";
 import { toast } from "vue3-toastify";
 import { errorCatch } from "../../api/api.helpers";
-import reportService from "../../service/report-service/report-service";
+
 export default {
   components: {
-    Wrapper,
-    Button,
+    Wrapper, // Регистрируем компонент Wrapper
+    Button,  // Регистрируем компонент Button
   },
 
+  // Определяем начальное состояние данных
   data() {
     return {
-      name: "",
-      date: "",
-      company: "",
-      subCompany: "",
-      object: "",
-      dateLicense: "",
-      dateOverLicense: "",
-      addressObject: "",
-      selectOrder: {},
-      orders: [],
+      name: "", // Имя отчета
+      date: "", // Дата отчета
+      company: "", // Компания
+      subCompany: "", // Подразделение компании
+      object: "", // Объект отчета
+      dateLicense: "", // Дата лицензии
+      dateOverLicense: "", // Дата окончания лицензии
+      addressObject: "", // Адрес объекта
+      selectOrder: {}, // Выбранный заказ
+      orders: [], // Список заказов
     };
   },
+
+  // Хук жизненного цикла, вызываемый при монтировании компонента
   mounted() {
-    this.getOrders();
-    this.getData();
+    this.getOrders(); // Получаем список заказов
+    this.getData(); // Получаем данные отчета
   },
+
   methods: {
+    // Метод для обновления отчета
     async updateOrder() {
       try {
         const res = await reportService.updateReport({
-          id: this.$route.params.id,
-          name: this.name,
-          date: this.date,
-          company: this.company,
-          subCompany: this.subCompany,
-          object: this.object,
-          dateLicense: this.dateLicense,
-          dateOverLicense: this.dateOverLicense,
-          addressObject: this.addressObject,
-          orderId: this.selectOrder,
+          id: this.$route.params.id, // ID отчета из параметров маршрута
+          name: this.name, // Имя отчета
+          date: this.date, // Дата отчета
+          company: this.company, // Компания
+          subCompany: this.subCompany, // Подразделение компании
+          object: this.object, // Объект отчета
+          dateLicense: this.dateLicense, // Дата лицензии
+          dateOverLicense: this.dateOverLicense, // Дата окончания лицензии
+          addressObject: this.addressObject, // Адрес объекта
+          orderId: this.selectOrder, // ID выбранного заказа
         });
-        toast.success(res.message);
+        toast.success(res.message); // Показ уведомления об успешном обновлении
       } catch (error) {
-        console.log(errorCatch(error));
-        toast.error(errorCatch(error));
+        console.log(errorCatch(error)); // Логирование ошибки
+        toast.error(errorCatch(error)); // Показ уведомления об ошибке
       }
     },
+
+    // Метод для получения данных отчета по ID
     async getData() {
       try {
         const res = await reportService.getById(this.$route.params.id);
+        // Заполняем данные отчета
         this.name = res.report.name;
         this.company = res.report.title.company;
         this.subCompany = res.report.title.subCompany;
         this.object = res.report.title.object;
         this.addressObject = res.report.title.addressObject;
-        this.date = this.changeDate(res.report.date);
-        this.dateLicense = this.changeDate(res.report.title.dateLicense);
-        this.dateOverLicense = this.changeDate(res.report.title.dateOverLicense);
+        this.date = this.changeDate(res.report.date); // Форматируем дату
+        this.dateLicense = this.changeDate(res.report.title.dateLicense); // Форматируем дату лицензии
+        this.dateOverLicense = this.changeDate(res.report.title.dateOverLicense); // Форматируем дату окончания лицензии
+        // Получаем данные заказа по ID
         const res2 = await orderService.getById(res.report.orderId);
-        this.selectOrder = res2.order._id;
+        this.selectOrder = res2.order._id; // Устанавливаем ID выбранного заказа
       } catch (error) {
-        console.log(error);
+        console.log(error); // Логирование ошибки
       }
     },
+
+    // Метод для получения списка заказов
     async getOrders() {
       try {
         const res = await orderService.getOrders();
-        this.orders = res.orders;
+        this.orders = res.orders; // Устанавливаем список заказов
       } catch (error) {
-        console.log(error);
-        toast.error(errorCatch(error));
+        console.log(error); // Логирование ошибки
+        toast.error(errorCatch(error)); // Показ уведомления об ошибке
       }
     },
+
+    // Метод для форматирования даты в строку "ГГГГ-ММ-ДД"
     changeDate(resDate) {
       const date = new Date(resDate);
       const year = date.getFullYear();
@@ -85,6 +101,7 @@ export default {
     },
   },
 };
+
 </script>
 
 <template>

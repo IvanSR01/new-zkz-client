@@ -1,54 +1,59 @@
 <script>
-import Wrapper from "../../components/ui/Wrapper.vue";
-import Button from "../../components/ui/Button.vue";
-import orderService from "../../service/order-service/order.service";
-import { toast } from "vue3-toastify";
-import { errorCatch } from "../../api/api.helpers";
+// Страница для обновления заказа
+import Wrapper from "../../components/ui/Wrapper.vue"; // Импортируем компонент Wrapper
+import Button from "../../components/ui/Button.vue"; // Импортируем компонент Button
+import orderService from "../../service/order-service/order.service"; // Импортируем сервис для работы с заказами
+import { toast } from "vue3-toastify"; // Импортируем библиотеку для уведомлений
+import { errorCatch } from "../../api/api.helpers"; // Импортируем помощник для обработки ошибок
+
 export default {
   components: {
-    Wrapper,
-    Button,
+    Wrapper, // Регистрируем компонент Wrapper
+    Button, // Регистрируем компонент Button
   },
   mounted() {
-    this.getOrder();
+    this.getOrder(); // Вызываем метод получения данных при монтировании компонента
   },
   data() {
     return {
-      fullName: "",
-      address: "",
-      date: "",
+      fullName: "", // Инициализируем поле для хранения полного имени
+      address: "", // Инициализируем поле для хранения адреса
+      date: "", // Инициализируем поле для хранения даты
     };
   },
   methods: {
+    // Асинхронный метод для обновления заказа
     async updateOrder() {
       try {
         const res = await orderService.updateOrder({
-          fullName: this.fullName,
-          address: this.address,
-          date: this.date,
-          id: this.$route.params.id,
+          fullName: this.fullName, // Передаем полное имя из состояния
+          address: this.address, // Передаем адрес из состояния
+          date: this.date, // Передаем дату из состояния
+          id: this.$route.params.id, // Передаем ID заказа из параметров маршрута
         });
-        toast.success(res.message);
+        toast.success(res.message); // Показ уведомления об успешном обновлении
       } catch (error) {
-        toast.error(errorCatch(error));
+        toast.error(errorCatch(error)); // Показ уведомления об ошибке
       }
     },
+    // Асинхронный метод для получения данных заказа по ID
     async getOrder() {
       try {
-        const { order } = await orderService.getById(this.$route.params.id);
-        this.fullName = order.fullName;
-        this.address = order.address;
-        const date = new Date(order.date);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        this.date = `${year}-${month}-${day}`;
+        const { order } = await orderService.getById(this.$route.params.id); // Получаем заказ по ID
+        this.fullName = order.fullName; // Устанавливаем полученное полное имя в состояние
+        this.address = order.address; // Устанавливаем полученный адрес в состояние
+        const date = new Date(order.date); // Преобразуем строку даты в объект Date
+        const year = date.getFullYear(); // Получаем год из даты
+        const month = String(date.getMonth() + 1).padStart(2, "0"); // Получаем месяц из даты, добавляем ведущий ноль
+        const day = String(date.getDate()).padStart(2, "0"); // Получаем день из даты, добавляем ведущий ноль
+        this.date = `${year}-${month}-${day}`; // Форматируем дату в строку и устанавливаем в состояние
       } catch (error) {
-        toast.error(errorCatch(error));
+        toast.error(errorCatch(error)); // Показ уведомления об ошибке
       }
     },
   },
 };
+
 </script>
 
 <template>

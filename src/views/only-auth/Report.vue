@@ -1,107 +1,121 @@
 <script>
-import Wrapper from "../../components/ui/Wrapper.vue";
-import { RouterLink } from "vue-router";
-import Button from "../../components/ui/Button.vue";
-import reportService from "../../service/report-service/report-service";
-import orderService from "../../service/order-service/order.service";
-import protocolService from "../../service/protocol-service/protocol.service";
-import { errorCatch } from "../../api/api.helpers";
-import { toast } from "vue3-toastify";
-let selected = 0;
+// Страница просмотра отчета
+import Wrapper from "../../components/ui/Wrapper.vue"; // Импортируем компонент Wrapper
+import { RouterLink } from "vue-router"; // Импортируем RouterLink для навигации
+import Button from "../../components/ui/Button.vue"; // Импортируем компонент Button
+import reportService from "../../service/report-service/report-service"; // Импортируем сервис для работы с отчетами
+import orderService from "../../service/order-service/order.service"; // Импортируем сервис для работы с заказами
+import protocolService from "../../service/protocol-service/protocol.service"; // Импортируем сервис для работы с протоколами
+import { errorCatch } from "../../api/api.helpers"; // Импортируем помощник для обработки ошибок
+import { toast } from "vue3-toastify"; // Импортируем библиотеку для уведомлений
 
 export default {
   components: {
-    Wrapper,
-    Button,
+    Wrapper, // Регистрируем компонент Wrapper
+    Button, // Регистрируем компонент Button
   },
   mounted() {
-    this.getData();
+    this.getData(); // Вызываем метод получения данных при монтировании компонента
   },
   data() {
     return {
-      selected,
+      selected: 0, // Инициализируем выбранный индекс протокола
       report: {
         title: {
           company: "",
           subCompany: "",
           object: "",
           addressObject: "",
-					dateLicense: this.dateLicense,
+          dateLicense: this.dateLicense,
           dateOverLicense: this.dateOverLicense,
         },
       },
-      order: {},
+      order: {}, // Инициализируем объект заказа
       protocol: {
-        columns: [],
-        rows: [],
+        columns: [], // Инициализируем столбцы протокола
+        rows: [], // Инициализируем строки протокола
       },
     };
   },
   methods: {
+    // Метод для установки выбранного протокола
     setSelected(i) {
       this.selected = i;
     },
+
+    // Асинхронный метод для получения данных отчета и заказа
     async getData() {
       try {
-        const res = await reportService.getById(this.$route.params.id);
-        console.log(res.report);
-        this.report = res.report;
-        const res2 = await orderService.getById(this.report.orderId);
-        this.order = res2.order;
+        const res = await reportService.getById(this.$route.params.id); // Запрашиваем отчет по ID
+        console.log(res.report); // Логируем полученный отчет
+        this.report = res.report; // Устанавливаем отчет в состояние
+        const res2 = await orderService.getById(this.report.orderId); // Запрашиваем заказ по ID
+        this.order = res2.order; // Устанавливаем заказ в состояние
       } catch (error) {
-        console.log(error);
+        console.log(error); // Логируем ошибку
       }
     },
+
+    // Асинхронный метод для получения протокола
     async getProtocol() {
       try {
         const res = await protocolService.getById(
           this.report.protocols[this.selected - 1]._id
-        );
-        this.protocol = res.protocol;
+        ); // Запрашиваем протокол по ID
+        this.protocol = res.protocol; // Устанавливаем протокол в состояние
       } catch (error) {
-        console.log(error);
+        console.log(error); // Логируем ошибку
       }
     },
+
+    // Асинхронный метод для сохранения изменений протокола
     async saveChange() {
       try {
         const res = await protocolService.updateProtocol({
-          id: this.report.protocols[this.selected - 1]._id,
-          columns: this.protocol.columns,
-          rows: this.protocol.rows,
+          id: this.report.protocols[this.selected - 1]._id, // ID обновляемого протокола
+          columns: this.protocol.columns, // Обновленные столбцы
+          rows: this.protocol.rows, // Обновленные строки
         });
-        toast.success(res.message);
+        toast.success(res.message); // Показ уведомления об успешном сохранении
       } catch (error) {
-        toast.error(errorCatch(error));
-        console.log(error);
+        toast.error(errorCatch(error)); // Показ уведомления об ошибке
+        console.log(error); // Логируем ошибку
       }
     },
+
+    // Асинхронный метод для генерации таблицы протокола
     async generateTable() {
       try {
         const res = await protocolService.generateTable({
-          id: this.report.protocols[this.selected - 1]._id,
+          id: this.report.protocols[this.selected - 1]._id, // ID протокола
         });
-        toast.success(res.message);
+        toast.success(res.message); // Показ уведомления об успешной генерации таблицы
       } catch (error) {
-        toast.error(errorCatch(error));
-        console.log(error);
+        toast.error(errorCatch(error)); // Показ уведомления об ошибке
+        console.log(error); // Логируем ошибку
       }
     },
+
+    // Метод для форматирования даты
     formatDate(dateString) {
       if (!dateString) return "";
-      const datePart = dateString.split("T")[0];
-      const [year, month, day] = datePart.split("-");
-      return `${day}.${month}.${year}`;
+      const datePart = dateString.split("T")[0]; // Извлекаем часть даты
+      const [year, month, day] = datePart.split("-"); // Разделяем дату на компоненты
+      return `${day}.${month}.${year}`; // Возвращаем дату в формате ДД.ММ.ГГГГ
     },
+
+    // Метод для изменения значений в строках протокола
     changeRowCol(i, itemsIndex, value, arr) {
       const newArr = [];
       for (let j = 0; j < arr.length; j++) {
-        if (i == j) newArr.push(value);
+        if (i == j) newArr.push(value); // Заменяем значение в выбранном индексе
         else newArr.push(arr[j]);
       }
-      this.protocol.rows[itemsIndex] = newArr;
+      this.protocol.rows[itemsIndex] = newArr; // Устанавливаем обновленные строки в состояние протокола
     },
   },
 };
+
 </script>
 
 <template>
@@ -149,8 +163,10 @@ export default {
           <div>Подкомпания(Титул) - {{ report.title.subCompany }}</div>
           <div>Обьект(Титул) - {{ report.title.object }}</div>
           <div>Адресс обьект(Титул) - {{ report.title.addressObject }}</div>
-					<div>Дата регистрации лицензии - {{ report.title.dateLicense }}</div>
-          <div>Дата окончания лицензии - {{ report.title.dateOverLicense }}</div>
+          <div>Дата регистрации лицензии - {{ report.title.dateLicense }}</div>
+          <div>
+            Дата окончания лицензии - {{ report.title.dateOverLicense }}
+          </div>
         </div>
       </div>
       <div class="table" v-if="selected > 0">

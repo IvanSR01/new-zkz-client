@@ -1,3 +1,4 @@
+// Файл tokens.cookie.js содержит функции для работы с токенами в cookies
 // Импорт библиотеки Cookies из модуля js-cookie
 import Cookies from "js-cookie";
 

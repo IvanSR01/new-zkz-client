@@ -1,14 +1,18 @@
 <script>
+// Страница регистрации
+// Импортируем компоненты
 import { RouterLink } from "vue-router";
 import { toast } from "vue3-toastify";
 import authService from "../service/auth-service/auth.service";
 import { errorCatch } from "../api/api.helpers";
 import Button from "../components/ui/Button.vue";
 export default {
+  // Регистрация компонентов в локальном компоненте
   components: {
     Button,
   },
   data() {
+    // Данные компонента
     return {
       email: "",
       fullName: "",
@@ -16,7 +20,9 @@ export default {
       password: "",
     };
   },
+  // Методы
   methods: {
+    // Метод ответа за запрос на регистрацию пользователя
     async submit() {
       try {
         const res = await authService.register({
@@ -25,11 +31,16 @@ export default {
           fullName: this.fullName,
           number: this.number,
         });
+        // При успешной регистрации сохраняем пользователя в хранилище Vuex
+        // Метод commit - коммитит изменения в хранилище, принимает два параметра (название мутации и ее аргументы)
         this.$store.commit("setUser", res);
+        // Вывод сообщения об успешной регистрации
         toast.success("Вы зарегистрировались");
+        // Переход на главную страницу
         this.$router.push({ path: "/" });
       } catch (error) {
         console.log(error);
+        // Вывод сообщения об ошибке
         toast.error(errorCatch(error));
       }
     },
@@ -38,10 +49,14 @@ export default {
 </script>
 
 <template>
+  <!-- Используем компонент Wrapper для обертки содержимого -->
   <div class="wrapper">
+    <!-- Форма регистрации -->
     <div class="content">
       <h1>Регистрация</h1>
+      <!-- Поля для ввода email, ФИО, номера удостоверения, пароля -->
       <input class="form-input" v-model="email" placeholder="E-mail" />
+      <!-- V-model связывает с конкретным полем, в это случае с fullName -->
       <input class="form-input" v-model="fullName" placeholder="ФИО" />
       <input
         class="form-input"

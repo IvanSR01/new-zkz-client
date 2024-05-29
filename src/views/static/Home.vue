@@ -1,4 +1,5 @@
 <script>
+// Главная страница
 // Импорт компонента Wrapper из соответствующего файла
 import Wrapper from "../../components/ui/Wrapper.vue";
 

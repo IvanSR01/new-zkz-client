@@ -1,10 +1,12 @@
 <script>
-import { toast } from "vue3-toastify";
-import { errorCatch } from "../../api/api.helpers";
-import Button from "../../components/ui/Button.vue";
-import Wrapper from "../../components/ui/Wrapper.vue";
-import orderService from "../../service/order-service/order.service";
-import reportService from "../../service/report-service/report-service";
+// Страница для создания нового отчета
+import { toast } from "vue3-toastify"; // Импортируем библиотеку для уведомлений
+import { errorCatch } from "../../api/api.helpers"; // Импортируем помощник для обработки ошибок
+import Button from "../../components/ui/Button.vue"; // Импортируем компонент кнопки
+import Wrapper from "../../components/ui/Wrapper.vue"; // Импортируем компонент обертки
+import orderService from "../../service/order-service/order.service"; // Импортируем сервис для работы с заказами
+import reportService from "../../service/report-service/report-service"; // Импортируем сервис для работы с отчетами
+
 export default {
   components: {
     Wrapper,
@@ -13,10 +15,11 @@ export default {
 
   data() {
     return {
+      // Данные компонента
       name: "",
       date: "",
-			dateLicense: "",
-			dateOverLicense: "",
+      dateLicense: "",
+      dateOverLicense: "",
       company: "",
       subCompany: "",
       object: "",
@@ -25,37 +28,45 @@ export default {
       orders: [],
     };
   },
+
+  // Хук жизненного цикла, вызывается после монтирования компонента
   mounted() {
-    this.getOrders();
+    this.getOrders(); // Загружаем список заказчиков при монтировании компонента
   },
+
   methods: {
+    // Метод для создания отчета
     async createReport() {
       try {
+        // Отправляем данные отчета на сервер
         const res = await reportService.createReport({
           name: this.name,
           date: this.date,
-					company: this.company,
-					subCompany: this.subCompany,
-					object: this.object,
-					dateLicense: this.dateLicense,
-					dateOverLicense: this.dateOverLicense,
-					addressObject: this.addressObject,
+          company: this.company,
+          subCompany: this.subCompany,
+          object: this.object,
+          dateLicense: this.dateLicense,
+          dateOverLicense: this.dateOverLicense,
+          addressObject: this.addressObject,
           orderId: this.selectOrder,
         });
-        toast.success(res.message);
-				this.$router.push('/d/reports')
+        toast.success(res.message); // Показ уведомления об успешном создании отчета
+        this.$router.push("/d/reports"); // Переход на страницу со списком отчетов
       } catch (error) {
-        console.log(errorCatch(error));
-        toast.error(errorCatch(error));
+        console.log(errorCatch(error)); // Логируем ошибку
+        toast.error(errorCatch(error)); // Показ уведомления об ошибке
       }
     },
+
+    // Метод для получения списка заказов
     async getOrders() {
       try {
+        // Получаем заказчиков с сервера
         const res = await orderService.getOrders();
-        this.orders = res.orders;
+        this.orders = res.orders; // Сохраняем заказчиков в состоянии компонента
       } catch (error) {
-        console.log(error);
-        toast.error(errorCatch(error));
+        console.log(error); // Логируем ошибку
+        toast.error(errorCatch(error)); // Показ уведомления об ошибке
       }
     },
   },
@@ -65,6 +76,7 @@ export default {
 <template>
   <Wrapper>
     <div class="content">
+			<!-- Форма создания отчета -->
       <div class="form">
         <h1>Новый отчет</h1>
         <input
@@ -98,13 +110,13 @@ export default {
           placeholder="Адресс обьекта(Титул)"
           class="form-input"
         />
-				<input
+        <input
           type="date"
           v-model="dateLicense"
           placeholder="Дата регистрации лицензии(Титул)"
           class="form-input"
         />
-				<input
+        <input
           type="date"
           v-model="dateOverLicense"
           placeholder="Действительно срок лицензии(Титул)"
@@ -141,10 +153,10 @@ export default {
     }
     box-sizing: border-box;
     width: 80vw;
-		max-height: 700px;
+    max-height: 700px;
     max-width: 450px;
     padding: 20px 25px;
-		overflow-y: scroll;
+    overflow-y: scroll;
     border-radius: 10px;
     background-color: #ffffff;
     display: flex;

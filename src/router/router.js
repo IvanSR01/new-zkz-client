@@ -1,5 +1,5 @@
+// Файл маршрутизатора для определения роутов в приложении
 import { createRouter, createWebHistory } from "vue-router";
-import { getTokens } from "../shared/cookie/tokens.cookie";
 // Определение маршрутов
 const routes = [
   {

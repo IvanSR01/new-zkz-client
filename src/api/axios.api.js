@@ -1,3 +1,4 @@
+// Файл axios.api.js содержит функции для работы с HTTP-запросами
 // Импортируем необходимые модули и функции
 import axios from "axios";
 import { getTokens, removeTokens } from "../shared/cookie/tokens.cookie";

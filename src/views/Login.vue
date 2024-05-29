@@ -1,29 +1,44 @@
 <script>
+// Страница входа
+// Импортируем компоненты
 import { RouterLink } from "vue-router";
 import { toast } from "vue3-toastify";
 import authService from "../service/auth-service/auth.service";
 import { errorCatch } from "../api/api.helpers";
 import Button from "../components/ui/Button.vue";
 export default {
+  // Регистрация компонентов в локальном компоненте
   components: {
     Button,
   },
 
   data() {
+    // Данные компонента
     return {
       login: "",
       password: "",
     };
   },
+
+  // Методы
   methods: {
+    // Метод ответа за запрос на авторизацию пользователя
     async submit() {
       try {
-        const res = await authService.login({login: this.login, password: this.password});
+        const res = await authService.login({
+          login: this.login,
+          password: this.password,
+        });
+				// При успешной авторизации сохраняем пользователя в хранилище Vuex
+				// Метод commit - коммитит изменения в хранилище, принимает два параметра (название мутации и ее аргументы)
         this.$store.commit("setUser", res);
+				// Вывод сообщения об успешной авторизации
         toast.success("Вы вошли в аккаунт");
+				// Переход на главную страницу
         this.$router.push({ path: "/" });
       } catch (error) {
         console.log(error);
+				// Вывод сообщения об ошибке
         toast.error(errorCatch(error));
       }
     },
@@ -37,7 +52,7 @@ export default {
       <h1>Вход</h1>
       <input class="form-input" v-model="login" placeholder="Логин" />
       <input class="form-input" v-model="password" placeholder="Пароль" />
-      <Button :click="submit" class="button" text="Вход" >Вход</Button>
+      <Button :click="submit" class="button" text="Вход">Вход</Button>
       <RouterLink to="/auth/register" class="link">Или Регистрация</RouterLink>
     </div>
   </div>

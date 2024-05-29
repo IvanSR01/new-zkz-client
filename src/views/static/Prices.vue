@@ -1,9 +1,8 @@
 <script>
-import Header from "../../components/Header.vue";
+// Страница с ценами
 import Wrapper from "../../components/ui/Wrapper.vue";
 export default {
   components: {
-    Header,
     Wrapper,
   },
 };

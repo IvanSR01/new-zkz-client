@@ -1,11 +1,10 @@
 <script>
+// Страница о нас
 // Импорт компонентов Header и Wrapper из соответствующих файлов
-import Header from "../../components/Header.vue";
 import Wrapper from "../../components/ui/Wrapper.vue";
 
 export default {
   components: {
-    Header,
     Wrapper,
   },
 };

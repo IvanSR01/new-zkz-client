@@ -1,48 +1,58 @@
 <script>
-import Wrapper from "../../components/ui/Wrapper.vue";
-import orderService from "../../service/order-service/order.service";
-import { toast } from "vue3-toastify";
-import { errorCatch } from "../../api/api.helpers";
-import { RouterLink } from "vue-router";
-const data = [];
+// Страница всех отчетов
+import Wrapper from "../../components/ui/Wrapper.vue"; // Импортируем компонент обертки
+import orderService from "../../service/order-service/order.service"; // Импортируем сервис для работы с заказами
+import { toast } from "vue3-toastify"; // Импортируем библиотеку для уведомлений
+import { errorCatch } from "../../api/api.helpers"; // Импортируем помощник для обработки ошибок
+import { RouterLink } from "vue-router"; // Импортируем компонент для ссылок на маршруты
+
 
 export default {
   components: {
-    Wrapper,
+    Wrapper, // Регистрируем компонент обертки
   },
+  
   mounted() {
-    this.getData();
+    this.getData(); // Вызываем метод получения данных при монтировании компонента
   },
+  
   data() {
     return {
-      data,
+      data: [], // Определяем состояние компонента
     };
   },
+  
   methods: {
+    // Метод для установки данных
     setData(data) {
-      this.data = data;
+      this.data = data; // Устанавливаем данные в состояние компонента
     },
+    
+    // Асинхронный метод для получения данных
     async getData() {
       try {
-        const res = await orderService.getOrders();
-        this.setData(res.orders);
+        const res = await orderService.getOrders(); // Запрашиваем заказчиков с сервера
+        this.setData(res.orders); // Устанавливаем полученные  заказчиков в состояние
       } catch (error) {
-        console.log(error);
-        toast.error(errorCatch(error));
+        console.log(error); // Логируем ошибку
+        toast.error(errorCatch(error)); // Показ уведомления об ошибке
       }
     },
-		async deleteOrder(id){ 
-			try{
-				const res = await orderService.deleteOrder(id);
-				toast.success(res.message);
-				this.getData();
-			} catch(e) {
-				console.log(e)
-				toast.error(errorCatch(e))
-			}
-		}
+    
+    // Асинхронный метод для удаления заказа
+    async deleteOrder(id) {
+      try {
+        const res = await orderService.deleteOrder(id); // Отправляем запрос на удаление Заказчика
+        toast.success(res.message); // Показ уведомления об успешном удалении
+        this.getData(); // Обновляем данные после удаления
+      } catch (e) {
+        console.log(e); // Логируем ошибку
+        toast.error(errorCatch(e)); // Показ уведомления об ошибке
+      }
+    }
   },
 };
+
 </script>
 
 <template>

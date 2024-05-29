@@ -1,39 +1,44 @@
 <script>
-import Wrapper from "../../components/ui/Wrapper.vue";
-import reportService from "../../service/report-service/report-service";
-import { RouterLink } from "vue-router";
-import { toast } from "vue3-toastify";
-import { errorCatch } from "../../api/api.helpers";
+// Страница просмотра отчетов
+import Wrapper from "../../components/ui/Wrapper.vue"; // Импортируем компонент Wrapper
+import reportService from "../../service/report-service/report-service"; // Импортируем сервис для работы с отчетами
+import { RouterLink } from "vue-router"; // Импортируем RouterLink для навигации
+import { toast } from "vue3-toastify"; // Импортируем библиотеку для уведомлений
+import { errorCatch } from "../../api.api.helpers"; // Импортируем помощник для обработки ошибок
+
 export default {
   components: {
-    Wrapper,
+    Wrapper, // Регистрируем компонент Wrapper
   },
   mounted() {
-    this.getData();
+    this.getData(); // Вызываем метод получения данных при монтировании компонента
   },
   data() {
     return {
-      data: [],
+      data: [], // Инициализируем массив данных
     };
   },
 
   methods: {
+    // Асинхронный метод для получения списка отчетов
     async getData() {
       try {
-        const res = await reportService.getReports();
-        this.data = res.reports;
+        const res = await reportService.getReports(); // Запрашиваем список отчетов
+        this.data = res.reports; // Устанавливаем полученные отчеты в состояние
       } catch (e) {
-        console.log(e);
+        console.log(e); // Логируем ошибку
       }
     },
+
+    // Асинхронный метод для удаления отчета по ID
     async deleteReport(id) {
       try {
-        const res = await reportService.deleteReport(id);
-        toast.success(res.message);
-        this.getData();
+        const res = await reportService.deleteReport(id); // Удаляем отчет по ID
+        toast.success(res.message); // Показ уведомления об успешном удалении
+        this.getData(); // Обновляем список отчетов
       } catch (e) {
-        console.log(e);
-        toast.error(errorCatch(e));
+        console.log(e); // Логируем ошибку
+        toast.error(errorCatch(e)); // Показ уведомления об ошибке
       }
     },
   },
@@ -45,9 +50,7 @@ export default {
     <div :class="{ content: true, empty: !data.length }">
       <div v-if="!data.length">Отчетов пока нет</div>
       <div class="order" v-for="(item, index) in data">
-        <RouterLink :to="`/d/reports/${item._id}`"
-          >{{ item.name }}</RouterLink
-        >
+        <RouterLink :to="`/d/reports/${item._id}`">{{ item.name }}</RouterLink>
         <div class="buttons">
           <RouterLink :to="`/d/reports/edit/${item._id}`">edit</RouterLink>
           <p @click="() => deleteReport(item._id)">remove</p>
@@ -102,8 +105,8 @@ export default {
   }
 }
 .empty {
-	height: 80vh;
+  height: 80vh;
   align-items: center;
-	font-size: 30px;
+  font-size: 30px;
 }
 </style>

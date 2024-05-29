@@ -1,3 +1,4 @@
+// Файл store.js для конфигурации хранилища Vuex
 // Импорт функции createStore из библиотеки Vuex
 import { createStore } from 'vuex'
 
