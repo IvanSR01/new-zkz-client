@@ -4,7 +4,7 @@ import Wrapper from "../../components/ui/Wrapper.vue"; // Импортируем
 import reportService from "../../service/report-service/report-service"; // Импортируем сервис для работы с отчетами
 import { RouterLink } from "vue-router"; // Импортируем RouterLink для навигации
 import { toast } from "vue3-toastify"; // Импортируем библиотеку для уведомлений
-import { errorCatch } from "../../api.api.helpers"; // Импортируем помощник для обработки ошибок
+import { errorCatch } from "../../api/api.helpers"; // Импортируем помощник для обработки ошибок
 
 export default {
   components: {
